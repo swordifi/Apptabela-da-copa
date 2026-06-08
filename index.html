@@ -1,358 +1,735 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Placar da Copa 2026</title>
-    <style>
-        :root {
-            --bg-main: #0b0f19;
-            --bg-card: #161f32;
-            --text-light: #f8fafc;
-            --text-muted: #94a3b8;
-            --gold: #f59e0b;
-            --primary: #ef4444; /* Cor temática da Copa */
-            --green-accent: #10b981;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Placar Copa 2026 · Gols com nome do jogador</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
+    body {
+      background-color: #0b0f19;
+      color: #f8fafc;
+      padding: 15px;
+      display: flex;
+      justify-content: center;
+    }
 
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-light);
-            padding: 15px;
-            display: flex;
-            justify-content: center;
-        }
+    .app-container {
+      width: 100%;
+      max-width: 520px;
+      background: transparent;
+    }
 
-        .app-container {
-            width: 100%;
-            max-width: 480px;
-            background: transparent;
-        }
+    header {
+      text-align: center;
+      padding: 20px 0;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border-radius: 24px;
+      margin-bottom: 20px;
+      border: 1px solid #334155;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
 
-        header {
-            text-align: center;
-            padding: 20px 0;
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            border-radius: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            border: 1px solid #334155;
-        }
+    header h1 {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
 
-        header h1 {
-            font-size: 24px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            color: var(--text-light);
-        }
+    header h1 span {
+      color: #ef4444;
+    }
 
-        header h1 span {
-            color: var(--primary);
-        }
+    /* Cronômetro e relógio digital */
+    .clock-panel {
+      background: #161f32;
+      border-radius: 18px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      border: 1px solid #23324d;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
 
-        /* Dashboard de Estatísticas */
-        .stats-dashboard {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid #23324d;
-        }
+    .digital-clock {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      background: #0b0f19;
+      padding: 6px 16px;
+      border-radius: 40px;
+      border: 1px solid #334155;
+      color: #10b981;
+      font-variant-numeric: tabular-nums;
+    }
 
-        .total-gols-box {
-            text-align: center;
-            font-size: 16px;
-            font-weight: bold;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-        }
+    .stopwatch-box {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
 
-        .total-gols-counter {
-            font-size: 32px;
-            color: var(--green-accent);
-            display: block;
-            font-weight: 800;
-        }
+    .stopwatch-display {
+      background: #0b0f19;
+      padding: 6px 12px;
+      border-radius: 40px;
+      font-size: 24px;
+      font-weight: 600;
+      color: #f59e0b;
+      border: 1px solid #334155;
+      font-variant-numeric: tabular-nums;
+      min-width: 95px;
+      text-align: center;
+    }
 
-        .top-teams {
-            font-size: 13px;
-            border-top: 1px dashed #23324d;
-            padding-top: 10px;
-        }
+    .stopwatch-buttons {
+      display: flex;
+      gap: 6px;
+    }
 
-        .top-teams-title {
-            color: var(--gold);
-            font-weight: bold;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            font-size: 11px;
-        }
+    .sw-btn {
+      background: #23324d;
+      border: none;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      padding: 6px 12px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.15s;
+      border: 1px solid #334155;
+    }
 
-        /* Barra de Busca */
-        .search-box {
-            width: 100%;
-            padding: 12px 15px;
-            border-radius: 12px;
-            border: 1px solid #23324d;
-            background-color: var(--bg-card);
-            color: white;
-            font-size: 15px;
-            margin-bottom: 20px;
-            outline: none;
-        }
+    .sw-btn:active { transform: scale(0.92); }
+    .sw-btn.start { background: #10b981; border-color: #10b981; }
+    .sw-btn.stop { background: #ef4444; border-color: #ef4444; }
+    .sw-btn.reset { background: #f59e0b; border-color: #f59e0b; }
 
-        .search-box:focus {
-            border-color: var(--primary);
-        }
+    /* estatísticas */
+    .stats-dashboard {
+      background: #161f32;
+      border-radius: 16px;
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 1px solid #23324d;
+    }
 
-        /* Container de Grupos */
-        .group-section {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid #23324d;
-        }
+    .total-gols-box {
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      color: #94a3b8;
+      margin-bottom: 8px;
+    }
 
-        .group-title {
-            font-size: 16px;
-            font-weight: bold;
-            color: var(--gold);
-            margin-bottom: 12px;
-            border-bottom: 2px solid #23324d;
-            padding-bottom: 5px;
-        }
+    .total-gols-counter {
+      font-size: 34px;
+      color: #10b981;
+      display: block;
+      font-weight: 800;
+    }
 
-        /* Grid de Times */
-        .team-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #1e293b;
-        }
+    .top-teams {
+      font-size: 13px;
+      border-top: 1px dashed #23324d;
+      padding-top: 10px;
+      margin-top: 6px;
+    }
 
-        .team-row:last-child {
-            border-bottom: none;
-        }
+    .top-teams-title {
+      color: #f59e0b;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
 
-        .team-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    /* barra busca */
+    .search-box {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 14px;
+      border: 1px solid #23324d;
+      background-color: #161f32;
+      color: white;
+      font-size: 15px;
+      margin-bottom: 20px;
+      outline: none;
+    }
 
-        .team-name {
-            font-size: 15px;
-            font-weight: 500;
-        }
+    .search-box:focus { border-color: #ef4444; }
 
-        /* Controles de Gols */
-        .counter-controls {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+    /* grupos */
+    .group-section {
+      background: #161f32;
+      border-radius: 16px;
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 1px solid #23324d;
+    }
 
-        .btn-counter {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: none;
-            background: #23324d;
-            color: white;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: background 0.2s;
-        }
+    .group-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: #f59e0b;
+      margin-bottom: 12px;
+      border-bottom: 2px solid #23324d;
+      padding-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+    }
 
-        .btn-counter:active {
-            transform: scale(0.9);
-        }
+    .match-info {
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: normal;
+      background: #1e293b;
+      padding: 2px 10px;
+      border-radius: 30px;
+    }
 
-        .btn-plus {
-            background: var(--primary);
-        }
+    .team-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #1e293b;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
 
-        .goals-display {
-            font-size: 18px;
-            font-weight: bold;
-            width: 24px;
-            text-align: center;
-        }
-    </style>
+    .team-row:last-child { border-bottom: none; }
+
+    .team-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .team-name {
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .match-datetime {
+      font-size: 11px;
+      background: #0b0f19;
+      padding: 2px 10px;
+      border-radius: 30px;
+      color: #94a3b8;
+      border: 1px solid #1e293b;
+      white-space: nowrap;
+    }
+
+    .counter-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-counter {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: #23324d;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: 0.15s;
+    }
+
+    .btn-counter:active { transform: scale(0.9); }
+    .btn-plus { background: #ef4444; }
+
+    .goals-display {
+      font-size: 18px;
+      font-weight: bold;
+      width: 24px;
+      text-align: center;
+    }
+
+    .auto-badge {
+      background: #10b981;
+      color: #0b0f19;
+      font-size: 9px;
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-left: 4px;
+      text-transform: uppercase;
+    }
+
+    .match-clock-badge {
+      background: #f59e0b;
+      color: #0b0f19;
+      font-size: 9px;
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-left: 4px;
+    }
+
+    /* Painel de notificação de gol com jogador */
+    .goal-notification {
+      background: #1e293b;
+      border-left: 4px solid #f59e0b;
+      padding: 10px 14px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+      transition: 0.2s;
+      border: 1px solid #334155;
+    }
+
+    .goal-notification strong {
+      color: #f59e0b;
+    }
+
+    .goal-notification .player-name {
+      background: #0b0f19;
+      padding: 2px 12px;
+      border-radius: 30px;
+      color: #10b981;
+      font-weight: 600;
+    }
+
+    footer {
+      font-size: 11px;
+      text-align: center;
+      color: #334155;
+      margin-top: 8px;
+    }
+  </style>
 </head>
 <body>
-
 <div class="app-container">
-    <header>
-        <h1>🏆 COPA DO MUNDO <span>2026</span></h1>
-        <p style="color: var(--text-muted); font-size: 12px; margin-top: 4px;">Marcador Geral de Gols Pro</p>
-    </header>
+  <header>
+    <h1>🏆 COPA DO MUNDO <span>2026</span></h1>
+    <p style="color: #94a3b8; font-size: 12px; margin-top: 4px;">Gols com nome do jogador ⚡</p>
+  </header>
 
-    <div class="stats-dashboard">
-        <div class="total-gols-box">
-            TOTAL DE GOLS NA COPA
-            <span class="total-gols-counter" id="global-counter">0</span>
-        </div>
-        <div class="top-teams">
-            <div class="top-teams-title">⭐ Ataques Mais Positivos:</div>
-            <div id="leaderboard-text" style="color: var(--text-muted);">Nenhum gol marcado ainda.</div>
-        </div>
+  <!-- Relógio + Cronômetro -->
+  <div class="clock-panel">
+    <div class="digital-clock" id="liveClock">00:00:00</div>
+    <div class="stopwatch-box">
+      <div class="stopwatch-display" id="stopwatchDisplay">00:00</div>
+      <div class="stopwatch-buttons">
+        <button class="sw-btn start" id="swStart">▶</button>
+        <button class="sw-btn stop" id="swStop">⏹</button>
+        <button class="sw-btn reset" id="swReset">↺</button>
+      </div>
     </div>
+  </div>
 
-    <input type="text" id="search-input" class="search-box" placeholder="🔎 Buscar seleção..." oninput="filterTeams()">
+  <!-- Notificação de gol -->
+  <div id="goalNotification" class="goal-notification" style="display: none;">
+    <span>⚽</span>
+    <span><strong>GOL!</strong> <span id="goalScorer" class="player-name">—</span> (<span id="goalTeam">—</span>)</span>
+  </div>
 
-    <div id="groups-wrapper">
-        </div>
+  <!-- Dashboard -->
+  <div class="stats-dashboard">
+    <div class="total-gols-box">
+      ⚽ TOTAL DE GOLS
+      <span class="total-gols-counter" id="global-counter">0</span>
+    </div>
+    <div class="top-teams">
+      <div class="top-teams-title">⭐ Ataques Mais Positivos:</div>
+      <div id="leaderboard-text" style="color: #94a3b8;">Nenhum gol marcado ainda.</div>
+    </div>
+  </div>
+
+  <input type="text" id="search-input" class="search-box" placeholder="🔎 Buscar seleção..." oninput="filterTeams()">
+
+  <div id="groups-wrapper"></div>
+  <footer>⚡ Gols automáticos apenas no horário do jogo · Cada gol mostra o jogador</footer>
 </div>
 
 <script>
-    // Definição das 48 seleções distribuídas nos 12 Grupos Oficiais (A-L) da Copa 2026
+  (function() {
+    // ---------- DADOS OFICIAIS COM DIA E HORÁRIO (simulação) ----------
     const cupData = {
-        "Grupo A": ["México", "África do Sul", "Coreia do Sul", "República Tcheca"],
-        "Grupo B": ["Canadá", "Bósnia e Herzegovina", "Catar", "Suíça"],
-        "Grupo C": ["Brasil", "Marrocos", "Haiti", "Escócia"],
-        "Grupo D": ["Estados Unidos", "Paraguai", "Austrália", "Turquia"],
-        "Grupo E": ["Alemanha", "Curaçau", "Costa do Marfim", "Equador"],
-        "Grupo F": ["Holanda", "Japão", "Suécia", "Tunísia"],
-        "Grupo G": ["Bélgica", "Egito", "Irã", "Nova Zelândia"],
-        "Grupo H": ["Espanha", "Cabo Verde", "Arábia Saudita", "Uruguai"],
-        "Grupo I": ["França", "Senegal", "Iraque", "Noruega"],
-        "Grupo J": ["Argentina", "Argélia", "Áustria", "Jordânia"],
-        "Grupo K": ["Portugal", "RD do Congo", "Uzbequistão", "Colômbia"],
-        "Grupo L": ["Inglaterra", "Croácia", "Gana", "Panamá"]
+      "Grupo A": [
+        { team: "México", datetime: "11/06 16:00" },
+        { team: "África do Sul", datetime: "11/06 19:00" },
+        { team: "Coreia do Sul", datetime: "12/06 13:00" },
+        { team: "República Tcheca", datetime: "12/06 16:00" }
+      ],
+      "Grupo B": [
+        { team: "Canadá", datetime: "13/06 14:00" },
+        { team: "Bósnia e Herzegovina", datetime: "13/06 17:00" },
+        { team: "Catar", datetime: "14/06 11:00" },
+        { team: "Suíça", datetime: "14/06 15:00" }
+      ],
+      "Grupo C": [
+        { team: "Brasil", datetime: "15/06 18:00" },
+        { team: "Marrocos", datetime: "15/06 21:00" },
+        { team: "Haiti", datetime: "16/06 14:00" },
+        { team: "Escócia", datetime: "16/06 17:00" }
+      ],
+      "Grupo D": [
+        { team: "Estados Unidos", datetime: "17/06 16:00" },
+        { team: "Paraguai", datetime: "17/06 19:00" },
+        { team: "Austrália", datetime: "18/06 12:00" },
+        { team: "Turquia", datetime: "18/06 15:00" }
+      ],
+      "Grupo E": [
+        { team: "Alemanha", datetime: "19/06 18:00" },
+        { team: "Curaçau", datetime: "19/06 21:00" },
+        { team: "Costa do Marfim", datetime: "20/06 14:00" },
+        { team: "Equador", datetime: "20/06 17:00" }
+      ],
+      "Grupo F": [
+        { team: "Holanda", datetime: "21/06 13:00" },
+        { team: "Japão", datetime: "21/06 16:00" },
+        { team: "Suécia", datetime: "22/06 15:00" },
+        { team: "Tunísia", datetime: "22/06 18:00" }
+      ],
+      "Grupo G": [
+        { team: "Bélgica", datetime: "23/06 17:00" },
+        { team: "Egito", datetime: "23/06 20:00" },
+        { team: "Irã", datetime: "24/06 12:00" },
+        { team: "Nova Zelândia", datetime: "24/06 15:00" }
+      ],
+      "Grupo H": [
+        { team: "Espanha", datetime: "25/06 18:00" },
+        { team: "Cabo Verde", datetime: "25/06 21:00" },
+        { team: "Arábia Saudita", datetime: "26/06 14:00" },
+        { team: "Uruguai", datetime: "26/06 17:00" }
+      ],
+      "Grupo I": [
+        { team: "França", datetime: "27/06 16:00" },
+        { team: "Senegal", datetime: "27/06 19:00" },
+        { team: "Iraque", datetime: "28/06 13:00" },
+        { team: "Noruega", datetime: "28/06 16:00" }
+      ],
+      "Grupo J": [
+        { team: "Argentina", datetime: "29/06 18:00" },
+        { team: "Argélia", datetime: "29/06 21:00" },
+        { team: "Áustria", datetime: "30/06 14:00" },
+        { team: "Jordânia", datetime: "30/06 17:00" }
+      ],
+      "Grupo K": [
+        { team: "Portugal", datetime: "01/07 15:00" },
+        { team: "RD do Congo", datetime: "01/07 18:00" },
+        { team: "Uzbequistão", datetime: "02/07 12:00" },
+        { team: "Colômbia", datetime: "02/07 15:00" }
+      ],
+      "Grupo L": [
+        { team: "Inglaterra", datetime: "03/07 17:00" },
+        { team: "Croácia", datetime: "03/07 20:00" },
+        { team: "Gana", datetime: "04/07 14:00" },
+        { team: "Panamá", datetime: "04/07 17:00" }
+      ]
     };
 
-    // Inicializa ou recupera os dados salvos do localStorage
-    let goalsData = JSON.parse(localStorage.getItem('cup_2026_goals')) || {};
+    // Lista de jogadores fictícios para cada seleção
+    const playerNames = {
+      "México": ["H. Lozano", "R. Jiménez", "E. Sánchez", "C. Montes"],
+      "África do Sul": ["P. Tau", "T. Mokoena", "K. Dolly", "S. Zungu"],
+      "Coreia do Sul": ["S. Son", "H. Hwang", "J. Lee", "W. Jeong"],
+      "República Tcheca": ["P. Schick", "T. Souček", "V. Černý", "J. Kuchta"],
+      "Canadá": ["A. Davies", "J. David", "S. Eustáquio", "T. Buchanan"],
+      "Bósnia e Herzegovina": ["E. Džeko", "M. Pjanić", "K. Hajrović", "A. Šehić"],
+      "Catar": ["A. Ali", "H. Al-Haydos", "A. Afif", "M. Boudiaf"],
+      "Suíça": ["X. Shaqiri", "G. Xhaka", "B. Embolo", "M. Akanji"],
+      "Brasil": ["Neymar Jr", "Vinicius Jr", "Rodrygo", "R. Veiga"],
+      "Marrocos": ["H. Ziyech", "Y. En-Nesyri", "S. Amrabat", "N. Mazraoui"],
+      "Haiti": ["D. Etienne", "S. Pierrot", "C. Alcántara", "R. Jean"],
+      "Escócia": ["J. McGinn", "S. Armstrong", "C. Adams", "L. Dykes"],
+      "Estados Unidos": ["C. Pulisic", "W. McKennie", "T. Weah", "B. Aaronson"],
+      "Paraguai": ["M. Almiron", "D. González", "A. Sanabria", "O. Cardozo"],
+      "Austrália": ["M. Leckie", "A. Hrustic", "H. Wright", "C. Goodwin"],
+      "Turquia": ["H. Çalhanoğlu", "C. Tosun", "Y. Yazıcı", "O. Kökçü"],
+      "Alemanha": ["K. Havertz", "J. Musiala", "T. Müller", "L. Sané"],
+      "Curaçau": ["J. Bacuna", "L. van den Hurk", "S. Martina", "M. Maria"],
+      "Costa do Marfim": ["S. Haller", "N. Pépé", "F. Kessié", "J. Boga"],
+      "Equador": ["E. Valencia", "M. Caicedo", "P. Estupiñán", "G. Plata"],
+      "Holanda": ["M. Depay", "C. Gakpo", "F. de Jong", "W. Weghorst"],
+      "Japão": ["T. Kubo", "K. Mitoma", "D. Kamada", "R. Osako"],
+      "Suécia": ["A. Isak", "D. Kulusevski", "V. Claesson", "E. Forsberg"],
+      "Tunísia": ["W. Khazri", "N. Sliti", "M. Msakni", "A. Maaloul"],
+      "Bélgica": ["K. De Bruyne", "R. Lukaku", "J. Doku", "T. Castagne"],
+      "Egito": ["M. Salah", "O. Marmoush", "T. Hamed", "M. Magdy"],
+      "Irã": ["M. Taremi", "S. Azmoun", "A. Jahanbakhsh", "E. Hajsafi"],
+      "Nova Zelândia": ["C. Wood", "L. Tuiloma", "J. Rojas", "M. Rogerson"],
+      "Espanha": ["P. Gavira", "Á. Morata", "F. Torres", "D. Olmo"],
+      "Cabo Verde": ["D. Rodrigues", "R. Mendes", "J. Fortes", "T. Varela"],
+      "Arábia Saudita": ["S. Al-Dawsari", "F. Al-Muwallad", "M. Al-Buraikan", "A. Al-Shehri"],
+      "Uruguai": ["L. Suárez", "F. Valverde", "R. Araújo", "D. Núñez"],
+      "França": ["K. Mbappé", "A. Griezmann", "M. Thuram", "O. Dembélé"],
+      "Senegal": ["S. Mané", "I. Sarr", "P. Gueye", "N. Mendy"],
+      "Iraque": ["A. Hussein", "M. Ali", "H. Attwan", "I. Bayesh"],
+      "Noruega": ["E. Haaland", "M. Ødegaard", "A. Sørloth", "F. Aursnes"],
+      "Argentina": ["L. Messi", "J. Álvarez", "A. Di María", "E. Fernández"],
+      "Argélia": ["R. Mahrez", "I. Slimani", "Y. Belaili", "S. Feghouli"],
+      "Áustria": ["M. Arnautović", "C. Baumgartner", "K. Laimer", "M. Sabitzer"],
+      "Jordânia": ["M. Al-Dardour", "S. Al-Rashdan", "B. Al-Maharmeh", "A. Al-Saify"],
+      "Portugal": ["C. Ronaldo", "B. Silva", "R. Leão", "J. Félix"],
+      "RD do Congo": ["C. Bakambu", "Y. Bolasie", "N. Muleka", "G. Wissa"],
+      "Uzbequistão": ["J. Shomurodov", "O. Urunov", "I. Alibaev", "E. Khamdamov"],
+      "Colômbia": ["L. Díaz", "R. Borré", "J. Lerma", "D. Zapata"],
+      "Inglaterra": ["H. Kane", "B. Saka", "J. Bellingham", "M. Rashford"],
+      "Croácia": ["L. Modrić", "M. Kramarić", "J. Gvardiol", "I. Perišić"],
+      "Gana": ["T. Partey", "A. Ayew", "M. Kudus", "I. Williams"],
+      "Panamá": ["A. Godoy", "E. Díaz", "L. Quintero", "J. Rodríguez"]
+    };
 
-    // Garante que todas as seleções tenham uma chave inicializada com valor 0
-    Object.values(cupData).flat().forEach(team => {
-        if (goalsData[team] === undefined) {
-            goalsData[team] = 0;
-        }
+    // ---------- GOALS DATA (localStorage) ----------
+    let goalsData = JSON.parse(localStorage.getItem('cup_2026_goals')) || {};
+    // garantir todas as seleções
+    Object.values(cupData).flat().forEach(item => {
+      if (goalsData[item.team] === undefined) goalsData[item.team] = 0;
     });
 
     function saveToStorage() {
-        localStorage.setItem('cup_2026_goals', JSON.stringify(goalsData));
-        updateStats();
+      localStorage.setItem('cup_2026_goals', JSON.stringify(goalsData));
+      updateStats();
     }
 
-    function modifyGoals(teamName, amount) {
-        let current = goalsData[teamName] || 0;
-        let newValue = current + amount;
-        if (newValue < 0) newValue = 0; // Impede contagem negativa
-        
-        goalsData[teamName] = newValue;
-        document.getElementById(`goals-${btoa(teamName).replace(/=/g, '')}`).innerText = newValue;
-        saveToStorage();
+    // ---------- NOTIFICAÇÃO DE GOL ----------
+    function showGoalNotification(playerName, teamName) {
+      const notif = document.getElementById('goalNotification');
+      document.getElementById('goalScorer').innerText = playerName;
+      document.getElementById('goalTeam').innerText = teamName;
+      notif.style.display = 'flex';
+      // esconde após 4 segundos
+      clearTimeout(window.notifTimeout);
+      window.notifTimeout = setTimeout(() => {
+        notif.style.display = 'none';
+      }, 4000);
     }
 
+    // ---------- MODIFICAR GOLS (manual) ----------
+    window.modifyGoals = function(teamName, amount) {
+      let current = goalsData[teamName] || 0;
+      let newValue = current + amount;
+      if (newValue < 0) newValue = 0;
+      goalsData[teamName] = newValue;
+      const safeId = btoa(teamName).replace(/=/g, '');
+      const el = document.getElementById(`goals-${safeId}`);
+      if (el) el.innerText = newValue;
+      
+      // Se for incremento (gol) e não remoção, mostrar jogador
+      if (amount > 0) {
+        const players = playerNames[teamName] || ["Jogador"];
+        const randomPlayer = players[Math.floor(Math.random() * players.length)];
+        showGoalNotification(randomPlayer, teamName);
+      }
+      
+      saveToStorage();
+    };
+
+    // ---------- GOL AUTOMÁTICO APENAS NA HORA DO JOGO ----------
+    let autoGoalInterval = null;
+
+    function isMatchTime(teamName) {
+      const now = new Date();
+      for (let group in cupData) {
+        for (let item of cupData[group]) {
+          if (item.team === teamName) {
+            const [datePart, timePart] = item.datetime.split(' ');
+            const [dayM, monthM] = datePart.split('/').map(Number);
+            const [hourM, minM] = timePart.split(':').map(Number);
+            const matchStart = new Date(2026, monthM-1, dayM, hourM, minM);
+            const matchEnd = new Date(matchStart.getTime() + 90 * 60000);
+            if (now >= matchStart && now <= matchEnd) return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    function startAutoGoals() {
+      if (autoGoalInterval) clearInterval(autoGoalInterval);
+      autoGoalInterval = setInterval(() => {
+        const allTeams = Object.values(cupData).flat().map(item => item.team);
+        const eligibleTeams = allTeams.filter(team => isMatchTime(team));
+        if (eligibleTeams.length === 0) return;
+        const randomTeam = eligibleTeams[Math.floor(Math.random() * eligibleTeams.length)];
+        if (randomTeam) {
+          let current = goalsData[randomTeam] || 0;
+          goalsData[randomTeam] = current + 1;
+          const safeId = btoa(randomTeam).replace(/=/g, '');
+          const el = document.getElementById(`goals-${safeId}`);
+          if (el) el.innerText = goalsData[randomTeam];
+          
+          // Mostra jogador
+          const players = playerNames[randomTeam] || ["Jogador"];
+          const randomPlayer = players[Math.floor(Math.random() * players.length)];
+          showGoalNotification(randomPlayer, randomTeam);
+          
+          saveToStorage();
+          if (el) {
+            el.style.transform = 'scale(1.5)';
+            setTimeout(() => el.style.transform = 'scale(1)', 200);
+          }
+        }
+      }, 9000);
+    }
+
+    function stopAutoGoals() {
+      if (autoGoalInterval) {
+        clearInterval(autoGoalInterval);
+        autoGoalInterval = null;
+      }
+    }
+
+    // ---------- CRONÔMETRO ----------
+    let stopwatchInterval = null;
+    let stopwatchSeconds = 0;
+
+    function updateStopwatchDisplay() {
+      const mins = String(Math.floor(stopwatchSeconds / 60)).padStart(2, '0');
+      const secs = String(stopwatchSeconds % 60).padStart(2, '0');
+      document.getElementById('stopwatchDisplay').innerText = `${mins}:${secs}`;
+    }
+
+    function startStopwatch() {
+      if (stopwatchInterval) return;
+      stopwatchInterval = setInterval(() => {
+        stopwatchSeconds++;
+        updateStopwatchDisplay();
+      }, 1000);
+    }
+
+    function stopStopwatch() {
+      if (stopwatchInterval) {
+        clearInterval(stopwatchInterval);
+        stopwatchInterval = null;
+      }
+    }
+
+    function resetStopwatch() {
+      stopStopwatch();
+      stopwatchSeconds = 0;
+      updateStopwatchDisplay();
+    }
+
+    // ---------- RELÓGIO DIGITAL ----------
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('liveClock').innerText = `${h}:${m}:${s}`;
+    }
+
+    // ---------- UPDATE STATS ----------
     function updateStats() {
-        let total = 0;
-        let sortedTeams = [];
+      let total = 0;
+      let sorted = [];
+      for (let team in goalsData) {
+        total += goalsData[team];
+        sorted.push({ name: team, goals: goalsData[team] });
+      }
+      document.getElementById('global-counter').innerText = total;
 
-        for (let team in goalsData) {
-            total += goalsData[team];
-            sortedTeams.push({ name: team, goals: goalsData[team] });
-        }
-
-        // Atualiza painel de total global
-        document.getElementById('global-counter').innerText = total;
-
-        // Filtra e organiza o top 3 ataques
-        sortedTeams.sort((a, b) => b.goals - a.goals);
-        let topThree = sortedTeams.filter(t => t.goals > 0).slice(0, 3);
-
-        const leaderboardEl = document.getElementById('leaderboard-text');
-        if (topThree.length === 0) {
-            leaderboardEl.innerText = "Nenhum gol marcado ainda.";
-        } else {
-            leaderboardEl.innerHTML = topThree.map((t, idx) => 
-                `<strong>${idx + 1}º ${t.name}</strong> (${t.goals} ${t.goals === 1 ? 'gol' : 'gols'})`
-            ).join(' | ');
-        }
+      sorted.sort((a, b) => b.goals - a.goals);
+      let topThree = sorted.filter(t => t.goals > 0).slice(0, 3);
+      const lb = document.getElementById('leaderboard-text');
+      if (topThree.length === 0) {
+        lb.innerText = "Nenhum gol marcado ainda.";
+      } else {
+        lb.innerHTML = topThree.map((t, idx) =>
+          `<strong>${idx+1}º ${t.name}</strong> (${t.goals} ${t.goals === 1 ? 'gol' : 'gols'})`
+        ).join(' | ');
+      }
     }
 
+    // ---------- BUILD APP ----------
     function buildAppStructure() {
-        const wrapper = document.getElementById('groups-wrapper');
-        wrapper.innerHTML = '';
+      const wrapper = document.getElementById('groups-wrapper');
+      wrapper.innerHTML = '';
 
-        for (let group in cupData) {
-            const section = document.createElement('div');
-            section.className = 'group-section';
-            section.id = `section-${group.replace(' ', '')}`;
+      for (let group in cupData) {
+        const section = document.createElement('div');
+        section.className = 'group-section';
+        section.id = `section-${group.replace(' ', '')}`;
 
-            let groupHtml = `<div class="group-title">${group}</div>`;
-            
-            cupData[group].forEach(team => {
-                // Cria um ID seguro usando base64 simples para evitar caracteres especiais no HTML
-                const safeId = btoa(team).replace(/=/g, '');
-                const currentGoals = goalsData[team] || 0;
+        let groupHtml = `<div class="group-title">${group} <span class="match-info">📅 jogos</span></div>`;
 
-                groupHtml += `
-                    <div class="team-row" data-team="${team.toLowerCase()}">
-                        <div class="team-info">
-                            <span class="team-name">${team}</span>
-                        </div>
-                        <div class="counter-controls">
-                            <button class="btn-counter" onclick="modifyGoals('${team}', -1)">-</button>
-                            <span class="goals-display" id="goals-${safeId}">${currentGoals}</span>
-                            <button class="btn-counter btn-plus" onclick="modifyGoals('${team}', 1)">+</button>
-                        </div>
-                    </div>
-                `;
-            });
+        cupData[group].forEach(item => {
+          const team = item.team;
+          const datetime = item.datetime || '--/-- --:--';
+          const safeId = btoa(team).replace(/=/g, '');
+          const currentGoals = goalsData[team] || 0;
 
-            section.innerHTML = groupHtml;
-            wrapper.appendChild(section);
-        }
-        updateStats();
-    }
-
-    function filterTeams() {
-        const query = document.getElementById('search-input').value.toLowerCase().trim();
-        const rows = document.querySelectorAll('.team-row');
-        
-        // Se houver busca ativa, esconde ou mostra as linhas individuais
-        rows.forEach(row => {
-            const name = row.getAttribute('data-team');
-            if (name.includes(query)) {
-                row.style.display = 'flex';
-            } else {
-                row.style.display = 'none';
-            }
+          groupHtml += `
+            <div class="team-row" data-team="${team.toLowerCase()}">
+              <div class="team-info">
+                <span class="team-name">${team}</span>
+                <span class="match-datetime">🕒 ${datetime}</span>
+                <span class="auto-badge">⚡auto</span>
+                <span class="match-clock-badge">⏳ jogo</span>
+              </div>
+              <div class="counter-controls">
+                <button class="btn-counter" onclick="modifyGoals('${team}', -1)">−</button>
+                <span class="goals-display" id="goals-${safeId}">${currentGoals}</span>
+                <button class="btn-counter btn-plus" onclick="modifyGoals('${team}', 1)">+</button>
+              </div>
+            </div>
+          `;
         });
 
-        // Oculta blocos de grupo vazios caso nenhum time coincida com a pesquisa
-        for (let group in cupData) {
-            const gId = `section-${group.replace(' ', '')}`;
-            const groupSection = document.getElementById(gId);
-            const visibleRows = groupSection.querySelectorAll(`.team-row[style="display: flex;"], .team-row:not([style])`);
-            
-            if (visibleRows.length === 0 && query !== '') {
-                groupSection.style.display = 'none';
-            } else {
-                groupSection.style.display = 'block';
-            }
-        }
+        section.innerHTML = groupHtml;
+        wrapper.appendChild(section);
+      }
+      updateStats();
     }
 
-    // Inicialização do App ao carregar a página
-    window.onload = buildAppStructure;
-</script>
+    // ---------- FILTRO ----------
+    window.filterTeams = function() {
+      const query = document.getElementById('search-input').value.toLowerCase().trim();
+      const rows = document.querySelectorAll('.team-row');
+      rows.forEach(row => {
+        const name = row.getAttribute('data-team');
+        row.style.display = name.includes(query) ? 'flex' : 'none';
+      });
+      for (let group in cupData) {
+        const gId = `section-${group.replace(' ', '')}`;
+        const section = document.getElementById(gId);
+        if (section) {
+          const visible = section.querySelectorAll('.team-row[style*="display: flex"]');
+          section.style.display = (visible.length === 0 && query !== '') ? 'none' : 'block';
+        }
+      }
+    };
 
+    // ---------- INICIALIZAÇÃO ----------
+    window.onload = function() {
+      buildAppStructure();
+      updateClock();
+      setInterval(updateClock, 1000);
+      startAutoGoals();
+      document.getElementById('swStart').addEventListener('click', startStopwatch);
+      document.getElementById('swStop').addEventListener('click', stopStopwatch);
+      document.getElementById('swReset').addEventListener('click', resetStopwatch);
+      window.addEventListener('beforeunload', function() {
+        stopAutoGoals();
+        stopStopwatch();
+      });
+    };
+  })();
+</script>
 </body>
 </html>
