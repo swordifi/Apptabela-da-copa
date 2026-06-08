@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placar da Copa 2026</title>
+    <style>
+        :root {
+            --bg-main: #0b0f19;
+            --bg-card: #161f32;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --gold: #f59e0b;
+            --primary: #ef4444; /* Cor temática da Copa */
+            --green-accent: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-light);
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background: transparent;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            border: 1px solid #334155;
+        }
+
+        header h1 {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: var(--text-light);
+        }
+
+        header h1 span {
+            color: var(--primary);
+        }
+
+        /* Dashboard de Estatísticas */
+        .stats-dashboard {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #23324d;
+        }
+
+        .total-gols-box {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .total-gols-counter {
+            font-size: 32px;
+            color: var(--green-accent);
+            display: block;
+            font-weight: 800;
+        }
+
+        .top-teams {
+            font-size: 13px;
+            border-top: 1px dashed #23324d;
+            padding-top: 10px;
+        }
+
+        .top-teams-title {
+            color: var(--gold);
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-size: 11px;
+        }
+
+        /* Barra de Busca */
+        .search-box {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 12px;
+            border: 1px solid #23324d;
+            background-color: var(--bg-card);
+            color: white;
+            font-size: 15px;
+            margin-bottom: 20px;
+            outline: none;
+        }
+
+        .search-box:focus {
+            border-color: var(--primary);
+        }
+
+        /* Container de Grupos */
+        .group-section {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #23324d;
+        }
+
+        .group-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--gold);
+            margin-bottom: 12px;
+            border-bottom: 2px solid #23324d;
+            padding-bottom: 5px;
+        }
+
+        /* Grid de Times */
+        .team-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #1e293b;
+        }
+
+        .team-row:last-child {
+            border-bottom: none;
+        }
+
+        .team-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .team-name {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        /* Controles de Gols */
+        .counter-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-counter {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: #23324d;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .btn-counter:active {
+            transform: scale(0.9);
+        }
+
+        .btn-plus {
+            background: var(--primary);
+        }
+
+        .goals-display {
+            font-size: 18px;
+            font-weight: bold;
+            width: 24px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <header>
+        <h1>🏆 COPA DO MUNDO <span>2026</span></h1>
+        <p style="color: var(--text-muted); font-size: 12px; margin-top: 4px;">Marcador Geral de Gols Pro</p>
+    </header>
+
+    <div class="stats-dashboard">
+        <div class="total-gols-box">
+            TOTAL DE GOLS NA COPA
+            <span class="total-gols-counter" id="global-counter">0</span>
+        </div>
+        <div class="top-teams">
+            <div class="top-teams-title">⭐ Ataques Mais Positivos:</div>
+            <div id="leaderboard-text" style="color: var(--text-muted);">Nenhum gol marcado ainda.</div>
+        </div>
+    </div>
+
+    <input type="text" id="search-input" class="search-box" placeholder="🔎 Buscar seleção..." oninput="filterTeams()">
+
+    <div id="groups-wrapper">
+        </div>
+</div>
+
+<script>
+    // Definição das 48 seleções distribuídas nos 12 Grupos Oficiais (A-L) da Copa 2026
+    const cupData = {
+        "Grupo A": ["México", "África do Sul", "Coreia do Sul", "República Tcheca"],
+        "Grupo B": ["Canadá", "Bósnia e Herzegovina", "Catar", "Suíça"],
+        "Grupo C": ["Brasil", "Marrocos", "Haiti", "Escócia"],
+        "Grupo D": ["Estados Unidos", "Paraguai", "Austrália", "Turquia"],
+        "Grupo E": ["Alemanha", "Curaçau", "Costa do Marfim", "Equador"],
+        "Grupo F": ["Holanda", "Japão", "Suécia", "Tunísia"],
+        "Grupo G": ["Bélgica", "Egito", "Irã", "Nova Zelândia"],
+        "Grupo H": ["Espanha", "Cabo Verde", "Arábia Saudita", "Uruguai"],
+        "Grupo I": ["França", "Senegal", "Iraque", "Noruega"],
+        "Grupo J": ["Argentina", "Argélia", "Áustria", "Jordânia"],
+        "Grupo K": ["Portugal", "RD do Congo", "Uzbequistão", "Colômbia"],
+        "Grupo L": ["Inglaterra", "Croácia", "Gana", "Panamá"]
+    };
+
+    // Inicializa ou recupera os dados salvos do localStorage
+    let goalsData = JSON.parse(localStorage.getItem('cup_2026_goals')) || {};
+
+    // Garante que todas as seleções tenham uma chave inicializada com valor 0
+    Object.values(cupData).flat().forEach(team => {
+        if (goalsData[team] === undefined) {
+            goalsData[team] = 0;
+        }
+    });
+
+    function saveToStorage() {
+        localStorage.setItem('cup_2026_goals', JSON.stringify(goalsData));
+        updateStats();
+    }
+
+    function modifyGoals(teamName, amount) {
+        let current = goalsData[teamName] || 0;
+        let newValue = current + amount;
+        if (newValue < 0) newValue = 0; // Impede contagem negativa
+        
+        goalsData[teamName] = newValue;
+        document.getElementById(`goals-${btoa(teamName).replace(/=/g, '')}`).innerText = newValue;
+        saveToStorage();
+    }
+
+    function updateStats() {
+        let total = 0;
+        let sortedTeams = [];
+
+        for (let team in goalsData) {
+            total += goalsData[team];
+            sortedTeams.push({ name: team, goals: goalsData[team] });
+        }
+
+        // Atualiza painel de total global
+        document.getElementById('global-counter').innerText = total;
+
+        // Filtra e organiza o top 3 ataques
+        sortedTeams.sort((a, b) => b.goals - a.goals);
+        let topThree = sortedTeams.filter(t => t.goals > 0).slice(0, 3);
+
+        const leaderboardEl = document.getElementById('leaderboard-text');
+        if (topThree.length === 0) {
+            leaderboardEl.innerText = "Nenhum gol marcado ainda.";
+        } else {
+            leaderboardEl.innerHTML = topThree.map((t, idx) => 
+                `<strong>${idx + 1}º ${t.name}</strong> (${t.goals} ${t.goals === 1 ? 'gol' : 'gols'})`
+            ).join(' | ');
+        }
+    }
+
+    function buildAppStructure() {
+        const wrapper = document.getElementById('groups-wrapper');
+        wrapper.innerHTML = '';
+
+        for (let group in cupData) {
+            const section = document.createElement('div');
+            section.className = 'group-section';
+            section.id = `section-${group.replace(' ', '')}`;
+
+            let groupHtml = `<div class="group-title">${group}</div>`;
+            
+            cupData[group].forEach(team => {
+                // Cria um ID seguro usando base64 simples para evitar caracteres especiais no HTML
+                const safeId = btoa(team).replace(/=/g, '');
+                const currentGoals = goalsData[team] || 0;
+
+                groupHtml += `
+                    <div class="team-row" data-team="${team.toLowerCase()}">
+                        <div class="team-info">
+                            <span class="team-name">${team}</span>
+                        </div>
+                        <div class="counter-controls">
+                            <button class="btn-counter" onclick="modifyGoals('${team}', -1)">-</button>
+                            <span class="goals-display" id="goals-${safeId}">${currentGoals}</span>
+                            <button class="btn-counter btn-plus" onclick="modifyGoals('${team}', 1)">+</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            section.innerHTML = groupHtml;
+            wrapper.appendChild(section);
+        }
+        updateStats();
+    }
+
+    function filterTeams() {
+        const query = document.getElementById('search-input').value.toLowerCase().trim();
+        const rows = document.querySelectorAll('.team-row');
+        
+        // Se houver busca ativa, esconde ou mostra as linhas individuais
+        rows.forEach(row => {
+            const name = row.getAttribute('data-team');
+            if (name.includes(query)) {
+                row.style.display = 'flex';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Oculta blocos de grupo vazios caso nenhum time coincida com a pesquisa
+        for (let group in cupData) {
+            const gId = `section-${group.replace(' ', '')}`;
+            const groupSection = document.getElementById(gId);
+            const visibleRows = groupSection.querySelectorAll(`.team-row[style="display: flex;"], .team-row:not([style])`);
+            
+            if (visibleRows.length === 0 && query !== '') {
+                groupSection.style.display = 'none';
+            } else {
+                groupSection.style.display = 'block';
+            }
+        }
+    }
+
+    // Inicialização do App ao carregar a página
+    window.onload = buildAppStructure;
+</script>
+
+</body>
+</html>
